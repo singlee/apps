@@ -4,119 +4,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的应用列表</title>
+    <title>精彩应用和游戏</title>
     <style>
+        /* 样式设置 */
         body {
-            font-family: 'Arial', sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
+            font-family: Arial, sans-serif;
+            margin: 0;
             padding: 20px;
-            background-color: #f8f8f8;
         }
         .header {
             text-align: center;
-            margin-bottom: 30px;
-        }
-        h1 {
-            color: #333;
-        }
-        .apps-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-        .app-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        .app-icon {
-            width: 100px;
-            height: 100px;
-            border-radius: 20px;
-            margin: 0 auto 15px;
-            display: block;
-            object-fit: cover;
-        }
-        .app-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .app-description {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 15px;
-            line-height: 1.5;
+            margin-bottom: 20px;
         }
         .app-store-btn {
             display: block;
-            background: #007aff;
-            color: white;
-            text-align: center;
+            width: 200px;
+            margin: 0 auto;
             padding: 10px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        .loading {
             text-align: center;
-            font-size: 18px;
-            padding: 20px;
+            background-color: #007aff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .app-store-btn:hover {
+            background-color: #0056b3;
+        }
+        .app-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .app-item {
+            width: 250px;
+            height: 150px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .app-item:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transform: scale(1.05);
+        }
+        .app-info {
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+        .app-title {
+            font-size: 16px;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .app-description {
+            font-size: 14px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
 <body>
+    <!-- 头部信息 -->
     <div class="header">
-        <h1>我的应用列表</h1>
-        <p>正在从App Store加载我的应用...</p>
+        <h1>精彩应用、游戏</h1>
+        <p>非常精彩的应用和游戏，欢迎下载、体验、评价、反馈。</p>
     </div>
     
-    <div id="apps-container" class="apps-container">
-        <div class="loading">加载中...</div>
-    </div>
-
+    <!-- App Store 按钮 -->
+    <a href="https://apps.apple.com/us/developer/%E7%AB%8B%E5%9C%A3-%E6%9D%8E/id558161855" class="app-store-btn">App Store</a>
+    
+    <!-- 应用列表容器 -->
+    <div class="app-list" id="app-list"></div>
+    
     <script>
-        const developerId = '558161855'; // 您的Apple开发者ID
-        const country = 'us'; // 国家代码
+        // 开发者ID
+        const developerId = '558161855';
+        const country = 'us';
         
+        // 获取应用列表函数
         async function fetchApps() {
             try {
                 const response = await fetch(`https://itunes.apple.com/lookup?id=${developerId}&entity=software&country=${country}`);
                 const data = await response.json();
                 
-                if(data.results && data.results.length > 0) {
+                if (data.results && data.results.length > 0) {
                     renderApps(data.results);
                 } else {
-                    document.getElementById('apps-container').innerHTML = '<div class="loading">未找到应用</div>';
+                    document.getElementById('app-list').innerHTML = '<p style="text-align:center;padding:20px;">未找到应用</p>';
                 }
             } catch (error) {
                 console.error('获取应用列表失败:', error);
-                document.getElementById('apps-container').innerHTML = '<div class="loading">加载失败，请刷新重试</div>';
+                document.getElementById('app-list').innerHTML = '<p style="text-align:center;padding:20px;">加载失败，请刷新重试</p>';
             }
         }
         
+        // 渲染应用列表函数
         function renderApps(apps) {
-            const container = document.getElementById('apps-container');
-            container.innerHTML = '';
+            const appList = document.getElementById('app-list');
+            appList.innerHTML = '';
             
             apps.forEach(app => {
-                if(app.kind === 'software') {
-                    const appCard = document.createElement('div');
-                    appCard.className = 'app-card';
+                if (app.kind === 'software') {
+                    const appItem = document.createElement('div');
+                    appItem.className = 'app-item';
+                    appItem.onclick = () => window.location.href = app.trackViewUrl;
                     
-                    appCard.innerHTML = `
-                        <img src="${app.artworkUrl100}" alt="${app.trackName}" class="app-icon">
-                        <div class="app-title">${app.trackName}</div>
-                        <div class="app-description">${app.description || '暂无描述'}</div>
-                        <a href="${app.trackViewUrl}" class="app-store-btn">App Store</a>
-                    `;
+                    const appInfo = document.createElement('div');
+                    appInfo.className = 'app-info';
                     
-                    container.appendChild(appCard);
+                    const appTitle = document.createElement('div');
+                    appTitle.className = 'app-title';
+                    appTitle.textContent = app.trackName;
+                    
+                    const appDescription = document.createElement('div');
+                    appDescription.className = 'app-description';
+                    appDescription.textContent = app.description || '暂无描述';
+                    
+                    appInfo.appendChild(appTitle);
+                    appInfo.appendChild(appDescription);
+                    appItem.appendChild(appInfo);
+                    
+                    appList.appendChild(appItem);
                 }
             });
         }
