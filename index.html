@@ -107,58 +107,11 @@
     <div class="container">
         <header>
             <h1>精彩应用、游戏</h1>
-            <p class="subtitle">非常精彩的应用和游戏，欢迎下载、体验、评价、反馈</p>
+            <p class="subtitle">非常精彩的应用和游戏</p>
+            <p class="subtitle">迎下载、体验、评价、反馈</p>
             <a href="https://apps.apple.com/us/developer/%E7%AB%8B%E5%9C%A3-%E6%9D%8E/id558161855" class="store-btn">App Store</a>
         </header>
-        
-        <div class="app-grid" id="appGrid">
-            <div class="loading">正在加载应用数据...</div>
-        </div>
     </div>
-
-    <script>
-        const DEVELOPER_ID = '558161855';
-        const COUNTRY_CODE = 'us';
-        
-        async function loadApps() {
-            try {
-                const response = await fetch(`https://itunes.apple.com/lookup?id=${DEVELOPER_ID}&entity=software&country=${COUNTRY_CODE}`);
-                const data = await response.json();
-                
-                const appGrid = document.getElementById('appGrid');
-                appGrid.innerHTML = '';
-                
-                if (data.results && data.results.length > 1) {
-                    data.results.slice(1).forEach(app => {
-                        if (app.kind === 'software') {
-                            const card = document.createElement('div');
-                            card.className = 'app-card';
-                            card.onclick = () => window.open(app.trackViewUrl, '_blank');
-                            
-                            const iconUrl = app.artworkUrl100 ? app.artworkUrl100.replace('100x100bb', '200x200bb') : '';
-                            
-                            card.innerHTML = `
-                                <div class="app-name">${app.trackName || '未知应用'}</div>
-                                <div class="app-content">
-                                    <img class="app-icon" src="${iconUrl}" alt="应用图标" onerror="this.style.display='none'">
-                                    <div class="app-desc">${app.description || '暂无详细描述'}</div>
-                                </div>
-                            `;
-                            
-                            appGrid.appendChild(card);
-                        }
-                    });
-                } else {
-                    appGrid.innerHTML = '<div class="loading">未找到应用数据</div>';
-                }
-            } catch (error) {
-                console.error('加载应用数据失败:', error);
-                document.getElementById('appGrid').innerHTML = '<div class="loading">数据加载失败，请刷新重试</div>';
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', loadApps);
-    </script>
 </body>
 </html>
 <code_end>
